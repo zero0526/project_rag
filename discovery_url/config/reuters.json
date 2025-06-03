@@ -1,0 +1,21 @@
+{
+  "domainName": "reuters.com",
+  "baseURl": "https://www.reuters.com/",
+  "articleUrlRegex": "/([a-z0-9/-]+)-(\\d{4}-\\d{2}-\\d{2})/",
+  "articleLinkSelector": "a.text__text__1FZLe",
+  "loadMoreSelector": "",
+  "categories": [
+    {
+      "name": "markets"
+    },
+    {
+      "name": "business"
+    },
+    {
+      "name": "technology"
+    },
+    {
+      "name": "sports"
+    }
+  ]
+}

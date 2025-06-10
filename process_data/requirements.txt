@@ -1,0 +1,10 @@
+newspaper3k
+redis
+pymongo
+faiss-cpu
+langchain
+pydantic
+sentence-transformers
+lxml_html_clean
+google-generativeai
+flask

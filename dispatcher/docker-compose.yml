@@ -1,0 +1,25 @@
+services:
+  redis:
+    image: redis:7.2-alpine
+    container_name: news_crawler_redis
+    ports:
+      - "6380:6379"
+    volumes:
+     - redis_cache_data:/data
+    restart: always
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - news_crawler_net
+
+
+networks:
+  news_crawler_net:
+    driver: bridge
+
+volumes:
+  redis_cache_data:

@@ -1,0 +1,108 @@
+/* Tổng thể */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Khung chat chính */
+.chat-container {
+    width: 400px;
+    height: 600px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Phần tiêu đề */
+.chat-header {
+    background-color: #007bff;
+    color: white;
+    padding: 5px;
+    text-align: center;
+    font-size: 1.2em;
+}
+
+/* Hộp chứa tin nhắn */
+.chat-box {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Khoảng cách giữa các tin nhắn */
+    background-color: #e9ebee;
+}
+
+/* Định dạng chung cho mỗi tin nhắn */
+.message {
+    max-width: 80%;
+    padding: 10px 15px;
+    border-radius: 18px;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+.message p {
+    margin: 0;
+}
+
+/* Tin nhắn của bot (bên trái) */
+.bot-message {
+    background-color: #fff;
+    color: #333;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+}
+
+/* Tin nhắn của người dùng (bên phải) */
+.user-message {
+    background-color: #007bff;
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+}
+
+/* Form nhập liệu */
+.chat-input-form {
+    display: flex;
+    padding: 15px;
+    border-top: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+#user-input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    margin-right: 10px;
+    font-size: 1em;
+}
+
+#user-input:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.chat-input-form button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s;
+}
+
+.chat-input-form button:hover {
+    background-color: #0056b3;
+}

@@ -1,0 +1,38 @@
+{
+  "www_theguardian_com": {
+    "title": "h1.dcr-1w6uej9",
+    "author": "div.dcr-1cfpnlw a, div.dcr-1cfpnlw span",
+    "content": "p.dcr-16w5gq9",
+    "date":{
+        "selector": "div.dcr-1kpcv08 span.dcr-u0h1qy",
+        "pattern":[
+            {
+            "regex": "\\w{3}\\s+\\d{1,2}\\s+\\w{3}\\s+\\d{4}\\s+\\d{2}\\.\\d{2}",
+            "layout": "Mon 2 Jan 2006 15.04 MST"
+            },
+            {
+            "regex": "\\w{3}\\s+\\d{1,2}\\s+\\w{3}\\s+\\d{4}\\s+\\d{2}\\.\\d{2}",
+            "layout": "Mon 2 Jan 2006 15.04"
+            }
+        ]
+    },
+    "related_links": "div.dcr-12wy48z a",
+    "regex_link": "^https:\\/\\/www\\.theguardian\\.com\\/[a-z-]+\\/\\d{4}\\/(\\d{2}|[a-z]{3})\\/\\d{2}\\/[a-z0-9-]+$"  
+    },
+    "dantri_com_vn": {
+    "title": "h1.title-page.detail",
+    "author": "div.author-name b",
+    "content": "div.singular-content p",
+    "date": {
+        "selector": "time.author-time, div.dcr-lp0nif",
+        "pattern": [
+            {
+                "regex":"\\d{2}/\\d{2}/\\d{4}\\s*-\\s*\\d{2}:\\d{2}",
+                "layout": "02/01/2006 - 15:04"
+            }
+        ]
+    },  
+    "related_links": "aside.article-related div.article-thumb a",
+    "regex_link": "^https?://dantri\\.com\\.vn/[^/]+/[^/]+-\\d+\\.htm$"  
+    }
+}

@@ -33,7 +33,12 @@ type BatchState struct {
 // DispatcherState holds the global state.
 type DispatcherState struct {
 	DomainMessages sync.Map // key: rootURL (dots replaced with _), value: []MessageModel
-	RetryMessages  sync.Map // key: rootURL, value: map[string]int (url -> retry count)
+	RetryMessages  sync.Map // key: rootURL, value: *sync.Map (url -> RetryMeta)
 	BatchWindow    []BatchState
 	WindowMu       sync.Mutex
+}
+
+type RetryMeta struct {
+	Count      int
+	FirstRetry time.Time
 }

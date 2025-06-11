@@ -3,6 +3,7 @@ package dispatch
 import (
 	"sync"
 	"time"
+	"log"
 )
 
 type Breaker struct {
@@ -16,6 +17,7 @@ type CircuitState struct {
 	BlockedUntil   time.Time
 	ConsecutiveOpen int // số lần liên tiếp bị mở lại sau Half-Open
 	InHalfOpen     bool
+	HalfOpenAttempts  int  
 	Mu             sync.Mutex
 }
 
@@ -34,53 +36,109 @@ func (b *Breaker) Allow(domain string) bool {
 	defer cs.Mu.Unlock()
 
 	now := time.Now()
-	if now.After(cs.BlockedUntil) {
-		if cs.InHalfOpen {
-			// Đã hết thời gian Half-Open → vẫn trong Half-Open, cho phép request thử
-			return true
-		} else if cs.BlockedUntil != (time.Time{}) {
-			// Mới hết thời gian Open → chuyển sang Half-Open
-			cs.InHalfOpen = true
-			return true
-		}
+
+	if now.Before(cs.BlockedUntil) {
+		return false
 	}
-	return now.After(cs.BlockedUntil)
+
+	if cs.BlockedUntil != (time.Time{}) && !cs.InHalfOpen {
+		cs.BlockedUntil = time.Time{}
+		cs.InHalfOpen = true
+		cs.HalfOpenAttempts = 0
+		log.Printf("[Breaker] Domain %s chuyển sang trạng thái Half-Open", domain)
+	}
+
+	// Nếu đang Half-Open, giới hạn 3 request
+	if cs.InHalfOpen {
+		if cs.HalfOpenAttempts >= 3 {
+			return false
+		}
+		cs.HalfOpenAttempts++
+		return true
+	}
+
+	return true
 }
 
-// RecordFailure increments failure count and blocks if threshold is reached.
+
+// chan theo so luong loi
 func (b *Breaker) RecordFailure(domain string) {
 	state, _ := b.States.LoadOrStore(domain, &CircuitState{})
 	cs := state.(*CircuitState)
 	cs.Mu.Lock()
 	defer cs.Mu.Unlock()
 
+	if cs.InHalfOpen {
+		if cs.HalfOpenAttempts >= 3 {
+			cs.InHalfOpen = false
+			cs.HalfOpenAttempts = 0
+			cs.ConsecutiveOpen++
+			cs.BlockedUntil = time.Now().Add(b.calcBackoff(cs.ConsecutiveOpen))
+			cs.Failures = 0
+			log.Printf("[Breaker] Domain %s thất bại 3 lần trong Half-Open => Open lại", domain)
+		}
+		return
+	}
+
 	cs.Failures++
 	if cs.Failures >= b.FailureThreshold {
-		cs.BlockedUntil = time.Now().Add(b.BackoffDuration)
+		cs.ConsecutiveOpen++
+		cs.BlockedUntil = time.Now().Add(b.calcBackoff(cs.ConsecutiveOpen))
 		cs.Failures = 0
 	}
 }
+
+//  ghi nhân success để rest fail
 func (b *Breaker) RecordSuccess(domain string) {
 	state, _ := b.States.LoadOrStore(domain, &CircuitState{})
 	cs := state.(*CircuitState)
 	cs.Mu.Lock()
 	defer cs.Mu.Unlock()
 
-	if cs.InHalfOpen {
-		// Thành công trong Half-Open → reset về Closed
-		cs.InHalfOpen = false
-		cs.ConsecutiveOpen = 0
-		cs.Failures = 0
-		cs.BlockedUntil = time.Time{}
-	}
+	cs.InHalfOpen = false
+	cs.ConsecutiveOpen = 0
+	cs.HalfOpenAttempts = 0
+	cs.Failures = 0
+	cs.BlockedUntil = time.Time{}
 }
-
-// BlockDomain explicitly blocks a domain.
+// block thôi 
 func (b *Breaker) BlockDomain(domain string) {
 	state, _ := b.States.LoadOrStore(domain, &CircuitState{})
 	cs := state.(*CircuitState)
 	cs.Mu.Lock()
 	defer cs.Mu.Unlock()
 
-	cs.BlockedUntil = time.Now().Add(b.BackoffDuration)
+	duration := b.calcBackoff(cs.ConsecutiveOpen)
+	cs.BlockedUntil = time.Now().Add(duration)
+	cs.Failures = 0
+	cs.InHalfOpen = false
+	cs.ConsecutiveOpen++
 }
+
+func (b *Breaker) calcBackoff(attempts int) time.Duration {
+	const maxShift = 16
+	if attempts > maxShift {
+		attempts = maxShift
+	}
+	return b.BackoffDuration * time.Duration(1<<attempts)
+}
+func (b *Breaker) GetState(domain string) string {
+	state, ok := b.States.Load(domain)
+	if !ok {
+		return "Closed"
+	}
+	cs := state.(*CircuitState)
+	cs.Mu.Lock()
+	defer cs.Mu.Unlock()
+
+	now := time.Now()
+	switch {
+	case now.Before(cs.BlockedUntil):
+		return "Open"
+	case cs.InHalfOpen:
+		return "Half-Open"
+	default:
+		return "Closed"
+	}
+}
+

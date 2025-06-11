@@ -22,7 +22,6 @@ func NewRetry(state *DispatcherState, maxRetries int, ttl time.Duration) *Retry 
 }
 
 // QueueForRetry adds messages to the retry queue.
-// pha count retry
 func (r *Retry) QueueForRetry(messages []MessageModel) {
 	for _, msg := range messages {
 		domain, err := util.ExtractDomain(msg.AbsURL)
@@ -31,21 +30,28 @@ func (r *Retry) QueueForRetry(messages []MessageModel) {
 		}
 		key := util.FormatKey(domain)
 
-		// Load or initialize retry map for the domain.
 		retries, _ := r.State.RetryMessages.LoadOrStore(key, &sync.Map{})
 		retryMap := retries.(*sync.Map)
 
-		// Increment retry count.
-		count, _ := retryMap.LoadOrStore(msg.AbsURL, 0)
-		retryCount := count.(int) + 1
-		//  delete if beyond retryCount
-		if retryCount > r.MaxRetries {
+		val, exists := retryMap.Load(msg.AbsURL)
+		var meta RetryMeta
+		if !exists {
+			meta = RetryMeta{
+				Count:      1,
+				FirstRetry: time.Now(),
+			}
+		} else {
+			meta = val.(RetryMeta)
+			meta.Count++
+		}
+
+		if meta.Count > r.MaxRetries {
 			fmt.Printf("[INFO] Max retries reached for URL: %s\n", msg.AbsURL)
 			retryMap.Delete(msg.AbsURL)
 			continue
 		}
 
-		retryMap.Store(msg.AbsURL, retryCount)
+		retryMap.Store(msg.AbsURL, meta)
 		r.State.RetryMessages.Store(key, retryMap)
 	}
 }
@@ -58,9 +64,9 @@ func (r *Retry) ProcessRetries() {
 		domainMessages, _ := r.State.DomainMessages.LoadOrStore(key, &[]MessageModel{})
 		messageList := domainMessages.(*[]MessageModel)
 
-		retryMap.Range(func(url, count interface{}) bool {
-			// Check TTL (simplified as retry count check).
-			if time.Now().After(time.Now().Add(-r.TTL)) {
+		retryMap.Range(func(url, meta  interface{}) bool {
+			retryMeta := meta.(RetryMeta)
+			if time.Since(retryMeta.FirstRetry) >= r.TTL {
 				*messageList = append(*messageList, MessageModel{AbsURL: url.(string)})
 				retryMap.Delete(url)
 			}

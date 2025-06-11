@@ -2,11 +2,13 @@ kafka:
   brokers:
     - "localhost:9092"
   group_id: "dispatcher-group"
-  topic_file: "E:\\practice\\viettel\\Discovery_Playwright\\topics.json"
+  topic_file: "./topics.json"
 
 dispatcher:
   num_in_batch: 10
   num_window: 3
   rate_Error: 0.7
-
+  url2crawlers:
+    - "http://localhost:8081"
+    # - "localhost:8082"
 

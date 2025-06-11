@@ -22,6 +22,7 @@ type URLResult struct {
 	URL    string `json:"url"`
 	Status string `json:"status"` // "success", "failed", "blocked"
 	RelativeURL []string `json:"reltiveURL"`
+	Category string `json:"category"`
 }
 
 // BatchState tracks the state of a batch for failure rate analysis.

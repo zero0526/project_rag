@@ -1,3 +1,7 @@
 #!/bin/sh
-echo "Starting Crawler on port ${PORT:-8080}"
-exec /app/crawler
+
+echo "[Crawler] Starting service..."
+
+echo "[Crawler] Using config at: ./configs/crawler.yaml"
+
+exec ./crawler --config=./configs/crawler.yaml

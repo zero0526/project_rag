@@ -68,6 +68,13 @@ func (b *Breaker) RecordFailure(domain string) {
 	cs.Mu.Lock()
 	defer cs.Mu.Unlock()
 
+
+	// open
+	if time.Now().Before(cs.BlockedUntil) {
+		return 
+	}
+
+	// half open
 	if cs.InHalfOpen {
 		if cs.HalfOpenAttempts >= 3 {
 			cs.InHalfOpen = false
@@ -80,6 +87,7 @@ func (b *Breaker) RecordFailure(domain string) {
 		return
 	}
 
+	// close
 	cs.Failures++
 	if cs.Failures >= b.FailureThreshold {
 		cs.ConsecutiveOpen++
@@ -101,7 +109,8 @@ func (b *Breaker) RecordSuccess(domain string) {
 	cs.Failures = 0
 	cs.BlockedUntil = time.Time{}
 }
-// block thôi 
+
+// block 
 func (b *Breaker) BlockDomain(domain string) {
 	state, _ := b.States.LoadOrStore(domain, &CircuitState{})
 	cs := state.(*CircuitState)
@@ -141,4 +150,14 @@ func (b *Breaker) GetState(domain string) string {
 		return "Closed"
 	}
 }
+func (b *Breaker) DumpStates() map[string]string {
+	result := make(map[string]string)
+	b.States.Range(func(key, value interface{}) bool {
+		domain := key.(string)
+		result[domain] = b.GetState(domain)
+		return true
+	})
+	return result
+}
+
 

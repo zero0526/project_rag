@@ -5,7 +5,6 @@ import (
 	"regexp"
 	"strings"
     "time"
-	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly/v2"
 
@@ -43,7 +42,6 @@ func CrawlPage(url string, category string, rules map[string]config.CrawlerRule,
 	}
 
 	keyDomain := util.FormatKey(domainKey)
-	fmt.Println(keyDomain,"keydomainavassdjkvbaksjvbsk")
 	rule, hasRule := rules[keyDomain]
 	c := colly.NewCollector()
 

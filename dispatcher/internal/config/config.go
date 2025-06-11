@@ -17,6 +17,7 @@ type DispatcherConfig struct {
 	NumInBatch int     `yaml:"num_in_batch"`
 	NumWindow  int     `yaml:"num_window"`
 	RateError  float64 `yaml:"rate_error"`
+	URL2Cralwers []string  `yaml:"url2crawlers"`
 }
 
 type Config struct {

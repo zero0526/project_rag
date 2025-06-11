@@ -1,56 +1,14 @@
-version: '3.8'
 services:
-  kafka:
-    image: confluentinc/cp-kafka:latest
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    networks:
-      - crawler-network
-    depends_on:
-      - zookeeper
-
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    networks:
-      - crawler-network
-
   crawler:
-    image: crawler
     build:
-      context: ..
+      context: .
       dockerfile: docker/crawler/Dockerfile
     environment:
-      - KAFKA_BROKERS=kafka:9092
-      - CONFIG_PATH=/app/configs/crawler.yaml
+      - CRAWLER_PORT=8081
     ports:
-      - "8080:8080"
-    networks:
-      - crawler-network
-    deploy:
-      replicas: 3
-
-  dispatcher:
-    image: dispatcher
-    build:
-      context: ..
-      dockerfile: docker/dispatcher/Dockerfile
-    environment:
-      - KAFKA_BROKERS=kafka:9092
-    networks:
-      - crawler-network
+      - "8081:8081"
     depends_on:
-      - kafka
-      - crawler
-
-networks:
-  crawler-network:
-    driver: bridge
+      - redis
 
 
 

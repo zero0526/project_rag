@@ -1,9 +1,11 @@
 package dispatch
 
 import (
-	"encoding/json"
-	"github.com/IBM/sarama"
 	"dispatcher/internal/utils"
+	"encoding/json"
+	"log"
+
+	"github.com/IBM/sarama"
 )
 
 type Consumer struct {
@@ -25,6 +27,7 @@ func (c *Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim saram
 			util.LogError("unmarshal message", err)
 			continue
 		}
+		log.Printf("messsage : %s", msg)
 
 		domain, err := util.ExtractDomain(msg.AbsURL)
 		if err != nil {

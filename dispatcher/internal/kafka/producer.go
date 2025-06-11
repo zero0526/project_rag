@@ -68,12 +68,11 @@ func (p *Producer) Send(topic string, message MessageModel) error {
 		Value: sarama.ByteEncoder(msgBytes),
 	}
 
-	partition, offset, err := p.syncProducer.SendMessage(kafkaMsg)
+	_ , _, err = p.syncProducer.SendMessage(kafkaMsg)
 	if err != nil {
 		return err
 	}
-
-	log.Printf("Sent message to topic %s [partition: %d, offset: %d]\n", topic, partition, offset)
+	// log.Printf("Sent message to topic %s [partition: %d, offset: %d]\n", topic, partition, offset)
 	return nil
 }
 

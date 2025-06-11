@@ -38,8 +38,8 @@ func NewDispatcher(
 	}
 
 	consumer := NewConsumer(state)
-	batcher := NewBatcher(state, numInBatch)
-	sender := NewSender(state, breaker, retry, numWindow, rateError)
+	batcher := NewBatcher(state, numInBatch, breaker)
+	sender := NewSender(state, breaker, retry,batcher, numWindow, rateError)
 
 	dispatcher := &Dispatcher{
 		Consumer: consumer,
@@ -82,13 +82,7 @@ func Run(ctx context.Context, dispatcher *Dispatcher, consumerGroup sarama.Consu
 				return
 			case <-ticker.C:
 				dispatcher.Retry.ProcessRetries()
-
-				batch := dispatcher.Batcher.CreateBatch()
-				if len(batch) > 0 {
-					if err := dispatcher.Sender.SendBatch(batch); err != nil {
-						util.LogError("send batch", err)
-					}
-				}
+				dispatcher.Sender.DispatchToCrawlers();
 			}
 		}
 	}()

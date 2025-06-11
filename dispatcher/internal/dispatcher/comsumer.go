@@ -18,7 +18,6 @@ func (c *Consumer) Setup(sarama.ConsumerGroupSession) error { return nil }
 
 func (c *Consumer) Cleanup(sarama.ConsumerGroupSession) error { return nil }
 
-// ConsumeClaim processes messages from Kafka topics.
 func (c *Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	for message := range claim.Messages() {
 		var msg MessageModel

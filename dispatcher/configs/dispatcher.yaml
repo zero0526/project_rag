@@ -2,7 +2,7 @@ kafka:
   brokers:
     - "localhost:9092"
   group_id: "dispatcher-group"
-  topic_file: "E:\\practice\\project_viettel\\Discovery_Playwright\\topics.json"
+  topic_file: "E:\\practice\\viettel\\Discovery_Playwright\\topics.json"
 
 dispatcher:
   num_in_batch: 10

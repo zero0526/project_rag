@@ -22,7 +22,7 @@
     "dantri_com_vn": {
     "title": "h1.title-page.detail",
     "author": "div.author-name b",
-    "content": "div.singular-content p",
+    "content": "div.singular-content p, div.e-magazine__body.dnews__body p",
     "date": {
         "selector": "time.author-time, div.dcr-lp0nif",
         "pattern": [

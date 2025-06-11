@@ -1,0 +1,25 @@
+sendmail là 1 chương trình gửi và chuyển tiếp email giữa các máy. 1980 thì sendmail có 1 chế độ debug hỗ trợ admin thử nghiệm kiểm tra cấu hình email, chế độ này không bị tắt ở các hệ thống Product vào thời điểm đó và có thể kích hoạt từ xa qua cổng 25 mà không cần xác thực. Morris worm dingf lệnh telnet để lợi dụng debug Mode để truy cập trực tiếp tới shell của máy tính nạn nhân
+fingerd là 1 dịch vụ cung cấp thông tin người dùng qua mạng khi nhận truy vấn từ lệnh finger Morris worm khai thác lỗi tràn bộ nhớ trong dịch vụ này bằng cách gửi 1 chuỗi dữ liệu không có ý nghía dài tới cổng 79 và nhờ tràn bộ nhứo để ghi đè lên giá trị trả về cảu hàm giúp chèn mã máy và điều hướng luòng thực thi đó 
+
+
+
+
+'Tên chủ đề:
+- Tìm hiểu công nghệ thu thập dữ liệu ứng dụng vào hệ thống thu thập dữ liệu báo chí
+Gợi ý hướng tìm hiểu:
+- Tìm hiểu các công nghệ xử lý đa luồng và mô hình thu thập dữ liệu
+- Tìm hiểu các công nghệ lưu trữ phân tán, xử lý phân tán
+- Tìm hiểu về cách tích hợp AI vào việc thu thập dữ liệu
+
+
+ 
+ 	
+'Đầu ra mong muốn:
+- Một báo cáo text (pdf) từ 15 - 30 trang, trình bày khoa học về kết quả tìm hiểu và đóng góp của cá nhân trong kết quả.
+- Một slide báo cáo từ 15 - 30 slide để phục vụ thuyết trình trước hội đồng để đánh giá kết quả cuối Giai đoạn 1.
+- Demo hoặc các tài liệu, nội dung khác bổ sung cho kết quả.
+
+
+
+Trong thời đại thông tin bùng nổ, việc tìm kiếm và xử lý dữ liệu từ các trang báo trở nên ngày càng quan trọng. Đề tài này xây dựng một hệ thống tự động để thu thập, xử lý và phân tích nội dung báo chí chỉ với vài bước đơn giản. Cứ mỗi nửa giờ, hệ thống sẽ quét 30 trang báo để cập nhật những bài viết mới, sau đó các crawler tải nội dung và trích xuất phần bài chính. Nội dung thu được sẽ được phân đoạn nhỏ gọn (dưới 500 ký tự, có chồng lắp để tăng độ liên quan giữa các đoạn), sau đó được chuyển sang dạng số hóa (embedding) và lưu trong hệ thống FAISS để truy vấn nhanh theo ngữ nghĩa, còn chi tiết bài sẽ được quản lý trong MongoDB. Khi người dùng đặt câu hỏi, hệ thống sử dụng FAISS để tìm những đoạn liên quan, từ đó xây dựng ngữ cảnh trả lời chính xác. Nhờ vậy, hệ thống có thể khai thác nội dung báo chí một cách nhanh chóng và thông minh.
+

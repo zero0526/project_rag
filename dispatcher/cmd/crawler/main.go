@@ -26,20 +26,17 @@ func main() {
 			return
 		}
 
-		// Decode batch from request body.
 		var batch []dispatch.MessageModel
 		if err := json.NewDecoder(r.Body).Decode(&batch); err != nil {
 			http.Error(w, "Invalid request body", http.StatusBadRequest)
 			return
 		}
 
-		// Log received batch.
 		log.Printf("Crawler received batch with %d URLs:", len(batch))
 		for _, msg := range batch {
 			log.Printf("- Category: %s, URL: %s", msg.Category, msg.AbsURL)
 		}
 
-		// Generate random response.
 		resp := dispatch.CrawlerResponse{
 			Status:     "ok",
 			URLResults: make([]dispatch.URLResult, len(batch)),

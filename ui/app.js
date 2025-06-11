@@ -34,7 +34,7 @@ function addMessage(text, sender) {
 function sendMessageToBackend(message) {
     addMessage('...', 'bot');
     
-    const apiUrl = 'https://localhost:5001/ask'; 
+    const apiUrl = 'http://localhost:5001/ask'; 
 
     fetch(apiUrl, {
         method: 'POST',
@@ -42,7 +42,7 @@ function sendMessageToBackend(message) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            message: message
+            query: message
         })
     })
     .then(response => {
@@ -55,7 +55,7 @@ function sendMessageToBackend(message) {
         const typingIndicator = chatBox.querySelector('.bot-message:last-child');
         typingIndicator.remove();
 
-        const botResponse = data.reply; 
+        const botResponse = data.answer; 
         addMessage(botResponse, 'bot');
     })
     .catch(error => {

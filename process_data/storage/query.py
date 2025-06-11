@@ -5,7 +5,7 @@ from storage.faiss_store import search_embeddings
 
 def getContext(query: str)->list:
     vec = embed_chunks(query)
-    dis, inds  = search_embeddings(vec, 5)
+    dis, inds  = search_embeddings(vec, 3)
     articles = indices2article(inds)
     return articles
 

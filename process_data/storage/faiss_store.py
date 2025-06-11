@@ -27,7 +27,8 @@ def save_embeddings(vectors, record_id):
         metadata = {
             "_id": faiss_id,                  
             "record_id": record_id,            
-            "chunk_index": i,                  
+            "chunk_index": i,              
+            "len": length,    
             "created_at": datetime.utcnow()
         }
         metaChunkings.append(metadata)
@@ -56,3 +57,5 @@ def load_index_from_disk(filename="faiss_index.bin"):
         print(f"Đã tải Faiss index từ {filename}.")
     except Exception as e:
         print(f"Lỗi khi tải Faiss index: {e}")
+
+    print(index.ntotal)
